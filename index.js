@@ -11,10 +11,13 @@ var corsOptions = {
   authenticate: true
 }
 
+const passport = require('./config/auth')
+
 
 app
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
+  .use(passport.initialize())
   .use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*')
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
