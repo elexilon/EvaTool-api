@@ -2,7 +2,11 @@ const mongoose = require('../config/database')
 const { Schema } = mongoose
 
 const studentSchema = new Schema({
-  _id: { type: String, required: false }
+  fullName: { type: String, required: true },
+  photo: { type: String, required: true },
+  evaluationColor: { type: String, required: true },
+  previousEvaluationColor: { type: String, required: true },
+  evaluatedAt: { type: Date, default: Date.now }
 })
 
 
