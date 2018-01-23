@@ -26,7 +26,7 @@ request
       .send({ email, password })
       .then((res) => {
         console.log('Authenticated!')
-        return createRecipes(res.body.token)
+        return createClasses(res.body.token)
       })
       .catch((err) => {
         console.error('Failed to authenticate!', err.message)
@@ -34,16 +34,16 @@ request
   }
 
   const createClasses = (token) => {
-    return classes.map((recipe) => {
+    return classes.map((schoolClass) => {
       return request
         .post(createUrl('/classes'))
         .set('Authorization', `Bearer ${token}`)
-        .send(recipe)
+        .send(schoolClass)
         .then((res) => {
-          console.log('Recipe seeded...', res.body.title)
+          console.log('schoolClass seeded...', res.body.title)
         })
         .catch((err) => {
-          console.error('Error seeding recipe!', err)
+          console.error('Error seeding schoolClass!', err)
         })
     })
   }
