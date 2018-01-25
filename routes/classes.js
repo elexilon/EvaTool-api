@@ -56,10 +56,57 @@ router.get('/classes', (req, res, next) => {
     const patchForGame = req.body
 
     SchoolClass.findById(id)
-      .then((game) => {
-        if (!game) { return next() }
-        const updatedGame = { ...game, ...patchForGame }
-        SchoolClass.findByIdAndUpdate(id, { $set: updatedGame }, { new: true })
+      .then((schoolClass) => {
+        if (!schoolClass) { return next() }
+        const updatedClass = { ...schoolClass, ...patchForGame }
+        SchoolClass.findByIdAndUpdate(id, { $set: updatedClass }, { new: true })
+        .then((schoolClass) => {
+          if (!schoolClass) { return next() }
+          res.status = 200
+          res.json(schoolClass)
+        })
+        .catch((error) => next(error))
+      })
+      .catch((error) => next(error))
+
+  })
+  .patch('/classes/:id/update', authenticate, (req, res, next) => {
+    const id = req.params.id
+    const student = req.body
+
+    SchoolClass.findById(id)
+      .then((schoolClass) => {
+        if (!schoolClass) { return next() }
+
+        schoolClass.students.filter((g) => (g._id.toString() === student._id))[0].evaluations = student.evaluations
+
+
+        SchoolClass.findByIdAndUpdate(id, { $set: schoolClass }, { new: true })
+        .then((schoolClass) => {
+          if (!schoolClass) { return next() }
+          res.status = 200
+          res.json(schoolClass)
+        })
+        .catch((error) => next(error))
+      })
+      .catch((error) => next(error))
+
+  })
+  .patch('/classes/:id/students/:studentid', authenticate, (req, res, next) => {
+    const id = req.params.id
+    const studentId = req.params.studentid
+
+    SchoolClass.findById(id)
+      .then((schoolClass) => {
+        if (!schoolClass) { return next() }
+
+        const students = schoolClass.students.filter((g) => (g._id.toString() !== studentId))
+        const studentsClass = {
+          students: students,
+        }
+        const updatedClass = { ...schoolClass, ...studentsClass  }
+
+        SchoolClass.findByIdAndUpdate(id, { $set: updatedClass }, { new: true })
         .then((schoolClass) => {
           if (!schoolClass) { return next() }
           res.status = 200
