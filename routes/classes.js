@@ -1,5 +1,8 @@
 const router = require('express').Router()
 const { SchoolClass } = require('../models')
+const passport = require('../config/auth')
+
+const authenticate = passport.authorize('jwt', { session: false })
 
 router.get('/classes', (req, res, next) => {
   SchoolClass.find()
@@ -48,7 +51,26 @@ router.get('/classes', (req, res, next) => {
     .catch((error) => next(error))
 
   })
-  .delete('/classes/:id', (req, res, next) => {
+  .patch('/classes/:id/students', authenticate, (req, res, next) => {
+    const id = req.params.id
+    const patchForGame = req.body
+
+    SchoolClass.findById(id)
+      .then((game) => {
+        if (!game) { return next() }
+        const updatedGame = { ...game, ...patchForGame }
+        SchoolClass.findByIdAndUpdate(id, { $set: updatedGame }, { new: true })
+        .then((schoolClass) => {
+          if (!schoolClass) { return next() }
+          res.status = 200
+          res.json(schoolClass)
+        })
+        .catch((error) => next(error))
+      })
+      .catch((error) => next(error))
+
+  })
+  .delete('/classes/:id', authenticate, (req, res, next) => {
     const id = req.params.id
     console.log(id)
     SchoolClass.findByIdAndRemove(id)
@@ -58,7 +80,5 @@ router.get('/classes', (req, res, next) => {
     })
     .catch((error) => next(error))
   })
-
-
 
 module.exports = router

@@ -3,7 +3,7 @@ const { Schema } = mongoose
 
 const evaluationSchema = new Schema({
   evaluationColor: { type: String, required: true },
-  createdBy: { type: String, required: true },
+  evaluatedBy: { type: String, required: true },
   evaluatedAt: { type: Date, default: Date.now }
 })
 
